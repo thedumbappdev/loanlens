@@ -64,6 +64,7 @@ function LoanLensPage() {
 
   const [showInfo, setShowInfo] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const currentYear = new Date().getFullYear();
 
   // Hydrate from URL on mount
   useEffect(() => {
@@ -324,7 +325,7 @@ function LoanLensPage() {
       <footer className="bg-slate-900 border-t border-slate-800 mt-6 sm:mt-8 md:mt-12">
         <div className="max-w-7xl mx-auto px-3 sm:px-4 py-5 sm:py-6 md:py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
-            <div className="text-slate-400 text-xs sm:text-sm">© 2024 Loan Calculator. All rights reserved.</div>
+            <div className="text-slate-400 text-xs sm:text-sm">&copy; {currentYear} Loan Calculator. All rights reserved.</div>
             <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm text-slate-500">
               <a href="#" className="hover:text-slate-300 transition-colors">
                 Privacy Policy
