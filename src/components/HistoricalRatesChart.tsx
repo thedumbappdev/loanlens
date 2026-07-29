@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect, useRef, useCallback, useMemo } from "react";
-import { Play, Pause, Square, TrendingUp, TrendingDown } from "lucide-react";
+import { useState, useMemo } from "react";
+import { TrendingUp } from "lucide-react";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from "recharts";
 import { historicalRates, loanTypeColors, loanTypeLabels } from "@/utils/historicalRates";
 
@@ -10,15 +10,7 @@ interface HistoricalRatesChartProps {
 }
 
 export function HistoricalRatesChart({ selectedLoanType }: HistoricalRatesChartProps) {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentYearIndex, setCurrentYearIndex] = useState(0);
-  const [animationSpeed, setAnimationSpeed] = useState(1);
-  const [rateChange, setRateChange] = useState<{ value: number; direction: "up" | "down" | "none" }>({
-    value: 0,
-    direction: "none",
-  });
-  const animationFrameRef = useRef<number | null>(null);
-  const lastIndexRef = useRef(0);
+  const [currentYearIndex, setCurrentYearIndex] = useState(56);
 
   const startYear = 1970;
   const endYear = 2026;
@@ -33,67 +25,6 @@ export function HistoricalRatesChart({ selectedLoanType }: HistoricalRatesChartP
     currentData.length > 0
       ? (currentData[currentData.length - 1][selectedLoanType as keyof (typeof currentData)[0]] as number)
       : 0;
-
-  const play = useCallback(() => {
-    if (currentYearIndex >= totalYears - 1) {
-      setCurrentYearIndex(0);
-      lastIndexRef.current = 0;
-    }
-    setIsPlaying(true);
-  }, [currentYearIndex, totalYears]);
-
-  const pause = useCallback(() => setIsPlaying(false), []);
-  const stop = useCallback(() => {
-    setIsPlaying(false);
-    setCurrentYearIndex(0);
-    lastIndexRef.current = 0;
-  }, []);
-
-  useEffect(() => {
-    if (isPlaying) {
-      let lastTime = performance.now();
-      const interval = 1000 / animationSpeed;
-
-      const animate = (currentTime: number) => {
-        if (!isPlaying) return;
-        const elapsed = currentTime - lastTime;
-
-        if (elapsed >= interval) {
-          lastTime = currentTime;
-
-          setCurrentYearIndex((prev) => {
-            if (prev >= totalYears - 1) {
-              setIsPlaying(false);
-              return prev;
-            }
-
-            const newIndex = prev + 1;
-            const newRate = historicalRates[newIndex][selectedLoanType as keyof (typeof historicalRates)[0]] as number;
-            const oldRate = historicalRates[lastIndexRef.current][
-              selectedLoanType as keyof (typeof historicalRates)[0]
-            ] as number;
-
-            const change = newRate - oldRate;
-            if (Math.abs(change) > 0.01) {
-              setRateChange({ value: Math.abs(change), direction: change > 0 ? "up" : "down" });
-              setTimeout(() => setRateChange((r) => ({ ...r, direction: "none" })), 800);
-            }
-
-            lastIndexRef.current = newIndex;
-            return newIndex;
-          });
-        }
-
-        animationFrameRef.current = requestAnimationFrame(animate);
-      };
-
-      animationFrameRef.current = requestAnimationFrame(animate);
-    }
-
-    return () => {
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-    };
-  }, [isPlaying, animationSpeed, totalYears, selectedLoanType]);
 
   const stats = useMemo(() => {
     const rates = historicalRates.map((r) => r[selectedLoanType as keyof (typeof historicalRates)[0]] as number);
@@ -117,19 +48,9 @@ export function HistoricalRatesChart({ selectedLoanType }: HistoricalRatesChartP
           </div>
           <div>
             <h3 className="text-lg font-semibold text-white">Historical {selectedLabel} Rates</h3>
-            <p className="text-sm text-slate-400">1970 - 2026 • Animated Timeline</p>
+            <p className="text-sm text-slate-400">1970 - 2026 • Historical Timeline</p>
           </div>
         </div>
-        <select
-          value={animationSpeed}
-          onChange={(e) => setAnimationSpeed(parseFloat(e.target.value))}
-          className="px-3 py-1.5 bg-slate-800 border border-slate-700 rounded-lg text-sm text-white"
-        >
-          <option value={0.5}>0.5x</option>
-          <option value={1}>1x</option>
-          <option value={2}>2x</option>
-          <option value={3}>3x</option>
-        </select>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -141,20 +62,6 @@ export function HistoricalRatesChart({ selectedLoanType }: HistoricalRatesChartP
             >
               {currentRate.toFixed(1)}%
             </div>
-            {rateChange.direction !== "none" && (
-              <div
-                className={`absolute -top-2 -right-8 flex items-center gap-1 text-sm font-medium animate-bounce ${
-                  rateChange.direction === "up" ? "text-red-400" : "text-emerald-400"
-                }`}
-              >
-                {rateChange.direction === "up" ? (
-                  <TrendingUp className="w-4 h-4" />
-                ) : (
-                  <TrendingDown className="w-4 h-4" />
-                )}
-                <span>+{rateChange.value.toFixed(1)}</span>
-              </div>
-            )}
           </div>
           <div className="text-slate-400">
             <div className="text-sm">Current Rate</div>
@@ -179,44 +86,13 @@ export function HistoricalRatesChart({ selectedLoanType }: HistoricalRatesChartP
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <button
-            onClick={isPlaying ? pause : play}
-            className="flex items-center gap-2 px-4 sm:px-5 py-2.5 rounded-xl font-medium transition-all duration-200 active:scale-95 text-sm sm:text-base"
-            style={{ backgroundColor: selectedColor }}
-          >
-            {isPlaying ? (
-              <>
-                <Pause className="w-5 h-5 text-white" />
-                <span className="text-white">Pause</span>
-              </>
-            ) : (
-              <>
-                <Play className="w-5 h-5 text-white" />
-                <span className="text-white">{currentYearIndex === 0 ? "Play" : "Resume"}</span>
-              </>
-            )}
-          </button>
-          <button
-            onClick={stop}
-            className="flex items-center gap-2 px-3 sm:px-4 py-2.5 bg-slate-700 hover:bg-slate-600 text-white rounded-xl transition-all duration-200 active:scale-95 text-sm sm:text-base"
-          >
-            <Square className="w-4 h-4" />
-            <span>Stop</span>
-          </button>
-        </div>
-
         <div className="flex-1 flex items-center gap-3">
           <input
             type="range"
             min={0}
             max={totalYears - 1}
             value={currentYearIndex}
-            onChange={(e) => {
-              const newIndex = parseInt(e.target.value);
-              setCurrentYearIndex(newIndex);
-              lastIndexRef.current = newIndex;
-            }}
+            onChange={(e) => setCurrentYearIndex(parseInt(e.target.value))}
             className="flex-1 h-2 bg-slate-700 rounded-full appearance-none cursor-pointer"
             style={{ background: `linear-gradient(to right, ${selectedColor} ${progress}%, #334155 ${progress}%)` }}
           />

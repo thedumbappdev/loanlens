@@ -88,7 +88,7 @@ function LoanLensPage() {
   return (
     <div className="min-h-screen bg-slate-950">
       <header className="bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
+        <div className="px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
               <div className="w-9 h-9 sm:w-11 sm:h-11 bg-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center flex-shrink-0">
@@ -122,7 +122,7 @@ function LoanLensPage() {
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-3 sm:px-4 py-4 sm:py-6 md:py-8">
+      <main className="px-3 sm:px-4 py-4 sm:py-6 md:py-8">
         <div className="mb-4 sm:mb-6">
           <div className="sm:hidden">
             <AdPlaceholder type="rectangle" />
@@ -132,7 +132,7 @@ function LoanLensPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 lg:gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 sm:gap-6 lg:gap-8 xl:gap-10">
           <div className="lg:col-span-1 space-y-4 sm:space-y-6">
             <div className="lg:hidden">
               {result && (
@@ -287,7 +287,7 @@ function LoanLensPage() {
             </div>
           </div>
 
-          <div className="lg:col-span-3 space-y-4 sm:space-y-6">
+          <div className="lg:col-span-2 xl:col-span-3 2xl:col-span-4 space-y-4 sm:space-y-6">
             {result ? (
               <>
                 {selectedLoanType && (
@@ -323,7 +323,7 @@ function LoanLensPage() {
       </main>
 
       <footer className="bg-slate-900 border-t border-slate-800 mt-6 sm:mt-8 md:mt-12">
-        <div className="max-w-7xl mx-auto px-3 sm:px-4 py-5 sm:py-6 md:py-8">
+        <div className="px-3 sm:px-4 py-5 sm:py-6 md:py-8">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-4">
             <div className="text-slate-400 text-xs sm:text-sm">&copy; {currentYear} Loan Calculator. All rights reserved.</div>
             <div className="flex items-center gap-4 sm:gap-6 text-xs sm:text-sm text-slate-500">
